@@ -1,0 +1,21 @@
+[package]
+name = "display_full_error"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+authors = ["Charles Samborski <demurgos@demurgos.net>"]
+description = "Minimal display formatter for error chains"
+documentation = "https://docs.rs/display_full_error"
+homepage = "https://github.com/demurgos/display-full-error"
+repository = "https://github.com/demurgos/display-full-error"
+readme = "./README.md"
+keywords = ["no_std", "no-std", "error", "display", "format"]
+categories = ["no-std::no-alloc", "rust-patterns", "value-formatting"]
+# Minimum Supported Rust Version (MSRV) policy:
+#
+# All stable Rust versions up to 3 years old (and after `1.81.0`) are officially
+# supported. Support for older versions is provided on a best-effort basis.
+# Increasing the MSRV is treated as a semver-minor change.
+rust-version = "1.81.0"
+
+[dependencies]

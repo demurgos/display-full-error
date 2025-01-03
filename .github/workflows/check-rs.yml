@@ -1,0 +1,33 @@
+name: "check-rs"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check-rs:
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        rust-version: ["1.81.0", "stable"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Rust ${{ matrix.rust-version }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          components: rustfmt, clippy
+
+      - name: Annotate commit with clippy warnings
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: "--all-targets --all-features -- -D warnings"
+
+      - name: Run tests
+        run: "cargo test"
