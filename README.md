@@ -18,10 +18,10 @@ features. This is intended as the most minimal formatter supporting error
 sources, to address the fact that there's no helper in the standard library
 so far as of Rust 1.83 (2024-11). If a standard formatter supporting error
 sources is added, this crate will be deprecated (but remain available).
-As a convenience, this library also exposes the [`DisplayFullErrorExt`](DisplayFullErrorExt)
-trait. It adds the [`display_full`](DisplayFullErrorExt::display_full)
+As a convenience, this library also exposes the [`DisplayFullErrorExt`][DisplayFullErrorExt]
+trait. It adds the [`display_full`][DisplayFullErrorExt::display_full]
 method to errors which returns the error in the formatting wrapper, as well
-as the [`to_string_full`](DisplayFullErrorExt::to_string_full) method as
+as the [`to_string_full`][DisplayFullErrorExt::to_string_full] method as
 a shorthand for `.display_full().to_string()`.
 
 ```rust
