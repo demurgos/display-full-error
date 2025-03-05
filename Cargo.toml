@@ -19,3 +19,7 @@ categories = ["no-std::no-alloc", "rust-patterns", "value-formatting"]
 rust-version = "1.81.0"
 
 [dependencies]
+
+[features]
+# Add the `to_string_full` method to the `DisplayFullErrorExt` extension trait.
+alloc = []

@@ -10,12 +10,14 @@
 //! That's all there is to it, there is no extra configuration or advanced
 //! features. This is intended as the most minimal formatter supporting error
 //! sources, to address the fact that there's no helper in the standard library
-//! so far as of Rust 1.83 (2024-11). If a standard formatter supporting error
+//! so far as of Rust 1.85 (2025-03). If a standard formatter supporting error
 //! sources is added, this crate will be deprecated (but remain available).
 //!
 //! As a convenience, this library also exposes the [`DisplayErrorChainExt`]
-//! trait. It adds the [`display_chain`](DisplayErrorChainExt::display_chain)
-//! method to errors which returns the error in the formatting wrapper.
+//! trait. It adds the [`display_full`](DisplayErrorChainExt::display_full)
+//! method to errors which returns the error in the formatting wrapper, as well
+//! as the [`to_string_full`](DisplayErrorChainExt::to_string_full) method as
+//! a convenience for `.display_full().to_string()`.
 //!
 //! ```rust
 //! use ::core::{error, fmt};
@@ -65,12 +67,15 @@
 //! // usage example
 //! let err = UploadError::Permission(PermissionError);
 //!
-//! // You can use thw wrapper directly, e.g. in a `format!`
+//! // You can use the wrapper directly, e.g. in a `format!`
 //! assert_eq!(format!("the app crashed: {}", DisplayFullError(&err)), String::from("the app crashed: upload failed: permission denied"));
 //! // Or you can use `to_string`
 //! assert_eq!(DisplayFullError(&err).to_string(), String::from("upload failed: permission denied"));
-//! // You can also use the method from the extension trait
-//! assert_eq!(err.display_full().to_string(), String::from("upload failed: permission denied"));
+//! // You can also use the convenience methods from the extension trait
+//! assert_eq!(format!("the app crashed: {}", err.display_full()), String::from("the app crashed: upload failed: permission denied"));
+//! // `to_string_full` requires the `alloc` feature to be enabled
+//! #[cfg(feature = "alloc")]
+//! assert_eq!(err.to_string_full(), String::from("upload failed: permission denied"));
 //! ```
 //!
 //! This library requires Rust 1.81.0 or later as it depends on the Rust
@@ -92,6 +97,7 @@
 //! [#85077](https://github.com/rust-lang/rust/issues/85077).
 #![deny(missing_docs)]
 #![no_std]
+#[cfg(any(test, feature = "alloc"))]
 extern crate alloc;
 
 /// Maximum number of messages to print in a single full error.
@@ -135,13 +141,23 @@ mod private {
   pub trait Sealed {}
 }
 
-/// Extension trait providing the [`display_full`](Self::display_full) method on [errors](::core::error::Error).
+/// Extension trait providing convenience methods on [errors](::core::error::Error).
 ///
 /// This trait provides a blanket implementation for all types implementing [the standard `Error` trait](::core::error::Error).
 pub trait DisplayFullErrorExt: ::core::error::Error + private::Sealed {
   /// Get a reference to this error wrapped in a [`DisplayFullError`] formatter, to display the error with all its sources.
   fn display_full(&self) -> DisplayFullError<'_, Self> {
     DisplayFullError(self)
+  }
+
+  /// Shorthand for `.display_full().to_string()`
+  ///
+  /// Requires the `alloc` feature.
+  #[cfg(feature = "alloc")]
+  fn to_string_full(&self) -> alloc::string::String {
+    use crate::alloc::string::ToString;
+
+    self.display_full().to_string()
   }
 }
 
