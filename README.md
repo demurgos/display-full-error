@@ -18,9 +18,11 @@ features. This is intended as the most minimal formatter supporting error
 sources, to address the fact that there's no helper in the standard library
 so far as of Rust 1.83 (2024-11). If a standard formatter supporting error
 sources is added, this crate will be deprecated (but remain available).
-As a convenience, this library also exposes the [`DisplayFullErrorExt`]
+As a convenience, this library also exposes the [`DisplayFullErrorExt`](DisplayFullErrorExt)
 trait. It adds the [`display_full`](DisplayFullErrorExt::display_full)
-method to errors which returns the error in the formatting wrapper.
+method to errors which returns the error in the formatting wrapper, as well
+as the [`to_string_full`](DisplayFullErrorExt::to_string_full) method as
+a shorthand for `.display_full().to_string()`.
 
 ```rust
 use ::core::{error, fmt};
@@ -70,12 +72,15 @@ impl error::Error for LimitError {}
 // usage example
 let err = UploadError::Permission(PermissionError);
 
-// You may use thw wrapper directly, e.g. in a `format!`
+// You can use the wrapper directly, e.g. in a `format!`
 assert_eq!(format!("the app crashed: {}", DisplayFullError(&err)), String::from("the app crashed: upload failed: permission denied"));
-// Or you can stringify
+// Or you can use `to_string`
 assert_eq!(DisplayFullError(&err).to_string(), String::from("upload failed: permission denied"));
-// You may also use the method from the extension trait
-assert_eq!(err.display_full().to_string(), String::from("upload failed: permission denied"));
+// You can also use the convenience methods from the extension trait
+assert_eq!(format!("the app crashed: {}", err.display_full()), String::from("the app crashed: upload failed: permission denied"));
+// `to_string_full` requires the `alloc` feature to be enabled
+#[cfg(feature = "alloc")]
+assert_eq!(err.to_string_full(), String::from("upload failed: permission denied"));
 ```
 
 This library requires Rust 1.81.0 or later as it depends on the Rust
@@ -88,3 +93,7 @@ guaranteed to be stable, any change would cause a major version bump.
 # License
 
 [MIT](./LICENSE.md)
+
+[DisplayFullErrorExt]: https://docs.rs/display_full_error/latest/display_full_error/trait.DisplayFullErrorExt.html
+[DisplayFullErrorExt::display_full]: https://docs.rs/display_full_error/latest/display_full_error/trait.DisplayFullErrorExt.html#method.display_full
+[DisplayFullErrorExt::to_string_full]: https://docs.rs/display_full_error/latest/display_full_error/trait.DisplayFullErrorExt.html#method.to_string_full

@@ -13,11 +13,11 @@
 //! so far as of Rust 1.85 (2025-03). If a standard formatter supporting error
 //! sources is added, this crate will be deprecated (but remain available).
 //!
-//! As a convenience, this library also exposes the [`DisplayErrorChainExt`]
-//! trait. It adds the [`display_full`](DisplayErrorChainExt::display_full)
+//! As a convenience, this library also exposes the [`DisplayFullErrorExt`]
+//! trait. It adds the [`display_full`](DisplayFullErrorExt::display_full)
 //! method to errors which returns the error in the formatting wrapper, as well
-//! as the [`to_string_full`](DisplayErrorChainExt::to_string_full) method as
-//! a convenience for `.display_full().to_string()`.
+//! as the [`to_string_full`](DisplayFullErrorExt::to_string_full) method as
+//! a shorthand for `.display_full().to_string()`.
 //!
 //! ```rust
 //! use ::core::{error, fmt};
